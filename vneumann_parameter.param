@@ -1,0 +1,41 @@
+%Physical parameter
+
+Omega            0.25       % Total matter density  (at z=0) (\Omega_0)
+OmegaLambda      0.75       % Cosmological constant (at z=0) (\Omega_{\Lambda,0})
+Redshift         49.0       % Starting redshift (z_ini=1/a_int-1)
+HubbleParam      0.7       % Hubble constant (H_0)
+GravitionalConstant	6.67384e-8	%Gravitional constant (G)
+
+UnitLength_in_cm          3.085678e24   % defines length unit of IC (in cm) (x_0) 
+UnitMass_in_g             1.989e43      % defines mass unit of IC (in g) (m_0)
+UnitVelocity_in_cm_per_s  1e5           % defines velocity unit of IC (in cm/sec) (v_0)
+
+%File name
+
+ICFile        /home/xingyu/ics_Carmen_2001_ascii.vtk	%file for initial conditions
+ICFileType		1				%1=ascii(vtk), 2=binary(gadget)
+
+FileBase         apcloud_result                % Base-filename of output files
+OutputFile        /home/xingyu/cosmology_result/1009_adaptive  % Directory for output
+
+%Numerical parameter
+
+BoundingBox_min_x	0.0	%Boundary in x_min direction, which will be used in octree
+BoundingBox_max_x	1000.0	%Boundary in x_max direction, which will be used in octree
+BoundingBox_min_y	0.0	%Boundary in y_min direction, which will be used in octree
+BoundingBox_max_y	1000.0	%Boundary in y_max direction, which will be used in octree
+BoundingBox_min_z	0.0	%Boundary in z_min direction, which will be used in octree
+BoundingBox_max_z	1000.0	%Boundary in z_max direction, which will be used in octree
+Periodic			1		%Whether the region is periodic (1=periodic, 0=non periodic)
+
+DeltaA			0.001			%Time step in a (\Delta a)
+EndRedShift		0.0				%End time of simulation
+
+MassPerParticle		4938.864742			%Mass per physical particle. If it is negative then each particle will have different mass read from input file.
+
+MaxOctreeLevel		20			%Maximum level of octree of physical particles
+CellSizeParameter	10000.0			%controls the size of computational particles
+NumberOfNeighbors	17			%Number of GFD neighbors
+DensityEstimator	1			%Method to estimate the density (1=GFD)
+
+

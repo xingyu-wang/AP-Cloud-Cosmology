@@ -1,0 +1,42 @@
+EXEC   = apcloud
+
+PETSC_DIR=/home/xingyu/Downloads/petsc-3.5.1
+OPENMPI_DIR=/usr/lib/openmpi
+LAPACK_DIR=/home/xingyu/Downloads/lapack-3.5.0
+
+CC       =  /usr/bin/mpic++
+MPICHLIB = #-L/usr/mpi/gcc/openmpi-1.2.2-1/lib64 -lmpi
+
+OBJS   = test.o parameter.o initialization.o controller.o solver.o mover.o octree.o viewer.o particle.o
+
+#INCL   = parameter.h particle.h initialization.h controller.h solver.h mover.h viewer.h octree.h Makefile
+
+INCL	= -I ./ -I ${PETSC_DIR}/include -I ${PETSC_DIR}/arch-linux2-c-debug/include  -I${OPENMPI_DIR}/include -I${OPENMPI_DIR}/include/openmpi ${LAPACK_DIR}/liblapacke.a ${LAPACK_DIR}/liblapack.a ${LAPACK_DIR}/librefblas.a
+
+LFLAGS = -L ./ -Wl,-rpath,${PETSC_DIR}/arch-linux2-c-debug/lib -L ${PETSC_DIR}/arch-linux2-c-debug/lib  -Wl,-rpath,${OPENMPI_DIR}/lib -L${OPENMPI_DIR}/lib
+
+OPTIONS= #-std=c++11
+
+LIBS   =  -lpetsc -llapack -lblas -lpthread -lm  -lgfortran $(MPICHLIB) 
+
+OPTIMIZE =   -O3 -Wno-reorder #-Wall
+
+CFLAGS =   $(OPTIONS)  $(OPTIMIZE)
+
+#$(EXEC): $(OBJS) 
+#	$(CC) $(OPTIMIZE) $(OBJS) $(LIBS) $(LFLAGS)  -o  $(EXEC)  
+
+#$(OBJS): $(INCL) 
+
+apcloud: test.cpp parameter.cpp particle.cpp initialization.cpp controller.cpp solver.cpp mover.cpp octree.cpp viewer.cpp parameter.h particle.h initialization.h controller.h solver.h mover.h viewer.h octree.h
+	$(CC) $(CFLAGS) $(LFLAGS) test.cpp parameter.cpp particle.cpp initialization.cpp controller.cpp solver.cpp mover.cpp octree.cpp viewer.cpp $(INCL) $(LIBS) -o ./${EXEC}
+
+run: 
+	mpirun -np 1 ./${EXEC} ./parameter.param
+
+ball: 
+	mpirun -np 1 ./${EXEC} ./ball.param
+
+.PHONY : clean
+clean:
+	rm -f $(OBJS) $(EXEC)

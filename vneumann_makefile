@@ -1,0 +1,42 @@
+EXEC   = apcloud
+
+PETSC_DIR=/home/xingyu/petsc-3.6.1
+OPENMPI_DIR=/usr/lib/openmpi
+LAPACK_DIR=/home/xingyu/lapack-3.5.0
+
+CC=/home/xingyu/petsc-3.6.1/arch-linux2-c-debug/bin/mpic++
+MPIEXEC=/home/xingyu/petsc-3.6.1/arch-linux2-c-debug/bin/mpiexec
+MPICHLIB = # -lmpi
+
+OBJS   = test.o parameter.o initialization.o controller.o solver.o mover.o octree.o viewer.o particle.o
+
+INCL	= -I ./ -I ${PETSC_DIR}/include -I ${PETSC_DIR}/arch-linux2-c-debug/include  -I${OPENMPI_DIR}/include -I${OPENMPI_DIR}/include/openmpi ${LAPACK_DIR}/liblapacke.a ${LAPACK_DIR}/liblapack.a ${LAPACK_DIR}/librefblas.a -I${LAPACK_DIR}/lapacke/include
+
+LFLAGS = -L ./ -Wl,-rpath,${PETSC_DIR}/arch-linux2-c-debug/lib -L ${PETSC_DIR}/arch-linux2-c-debug/lib -L ${LAPACK_DIR} -L ${LAPACK_DIR}/BLAS -Wl,-rpath,${OPENMPI_DIR}/lib -L${OPENMPI_DIR}/lib
+
+OPTIONS= -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP -O -fopenmp
+
+LIBS   =  -lpetsc -llapack -lrefblas -lpthread -lm  -lgfortran $(MPICHLIB) -lgomp
+
+OPTIMIZE =   -O3 -Wno-reorder
+
+CFLAGS =   $(OPTIONS)  $(OPTIMIZE)
+
+
+
+apcloud: test.cpp parameter.cpp particle.cpp initialization.cpp controller.cpp solver.cpp mover.cpp octree.cpp viewer.cpp parameter.h particle.h initialization.h controller.h solver.h mover.h viewer.h octree.h apcloud_macro.h vneumann_makefile
+	$(CC) $(CFLAGS) $(LFLAGS) test.cpp parameter.cpp particle.cpp initialization.cpp controller.cpp solver.cpp mover.cpp octree.cpp viewer.cpp $(INCL) $(LIBS) -o ./${EXEC}
+
+#Number_P=8
+#OMP_NUM_THREADS=4
+
+run: 
+	-@${MPIEXEC} -n ${Number_P} ./${EXEC} ./vneumann_parameter.param > /home/xingyu/cosmology_result/1009_adaptive/result.txt
+
+ball: 
+	-@${MPIEXEC} -n ${Number_P} ./${EXEC} ./vneumann_ball.param > /home/xingyu/cosmology_result/NP${Number_P}_THREADS${OMP_NUM_THREADS}.txt
+
+
+.PHONY : clean
+clean:
+	rm -f $(OBJS) $(EXEC)
