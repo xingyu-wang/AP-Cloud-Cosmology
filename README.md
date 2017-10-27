@@ -1,5 +1,7 @@
 AP-Cloud method code for cosmology simulation
+
 Author:Xingyu Wang <xingyuwangcs@gmail.com>
+
 For the detailed description of the method, see <https://arxiv.org/pdf/1603.04039.pdf>
 
 cosmology_main.cpp: Main function
